@@ -1,0 +1,67 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: campus-cultural-mall
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/campus_cultural?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai
+    username: root
+    password: "123456"
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      database: 0
+      timeout: 3000ms
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      acks: all                      # 强一致投递，秒杀单不丢
+      retries: 3
+    consumer:
+      group-id: seckill-order-group
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      enable-auto-commit: false      # 手动 ack，配合 at-least-once
+    listener:
+      ack-mode: manual_immediate
+  task:
+    scheduling:
+      pool:
+        size: 4
+
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  global-config:
+    banner: false
+    db-config:
+      id-type: assign_id
+
+# 应用自定义配置
+campus:
+  sms:
+    mock: true                 # true=不发真短信，验证码直接返回给前端（联调用）；生产改 false 对接短信服务商
+  jwt:
+    secret: 1234abcd1234
+    expire: 1800              # 秒
+  cache:
+    local-ttl: 5              # Caffeine 秒
+    redis-ttl: 1800           # 秒（兜底物理 TTL）
+    logical-expire: 3600      # 逻辑过期秒数
+  seckill:
+    order-timeout-minutes: 15 # 秒杀单超时关单
+  ai:
+    dashscope-api-key: ${DASHSCOPE_API_KEY:your-key-here}
+    model: qwen-plus
+    context-window: 10        # 保留最近N轮
+    max-tokens: 800
+
+logging:
+  level:
+    org.xc.campus: debug
