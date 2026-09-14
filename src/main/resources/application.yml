@@ -11,7 +11,7 @@ spring:
     password: "123456"
   data:
     redis:
-      host: localhost
+      host: 127.0.0.1   # 用 IP 而非 localhost：Windows 上 localhost 可能解析成 IPv6，绕开 Docker 端口转发歧义
       port: 6379
       database: 0
       timeout: 3000ms
