@@ -8,7 +8,9 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.xc.campus.annotation.RateLimit;
 import org.xc.campus.dto.LoginCodeDTO;
+import org.xc.campus.enums.LimitDimension;
 import org.xc.campus.dto.LoginVO;
 import org.xc.campus.dto.UserDTO;
 import org.xc.campus.dto.UserUpdateDTO;
@@ -26,7 +28,10 @@ public class UserController {
 
     private final UserService userService;
 
-    /** 5.2.1 发送验证码（mock 模式直接返回验证码，方便联调） */
+    /** 5.2.1 发送验证码（mock 模式直接返回验证码，方便联调）。
+     *  限流：IP 维度 60 秒最多 5 次 —— 防"一个 IP 换着手机号轰炸短信通道"；
+     *  "同一手机号 60 秒一条"由 Service 里的 setIfAbsent 负责，两层维度不同 */
+    @RateLimit(limit = 5, windowSeconds = 60, dimension = LimitDimension.IP)
     @PostMapping("/send-code")
     public Result<String> sendCode(@RequestBody @Valid LoginCodeDTO dto) {
         return Result.ok(userService.sendCode(dto.getPhone()));

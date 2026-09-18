@@ -53,7 +53,7 @@ campus:
   cache:
     local-ttl: 5              # Caffeine 秒
     redis-ttl: 1800           # 秒（兜底物理 TTL）
-    logical-expire: 60        # 逻辑过期秒数（教学演示设 60 便于观察重建；生产改 3600）
+    logical-expire: 3600        # 逻辑过期秒数（教学演示设 60 便于观察重建；生产改 3600）
   seckill:
     order-timeout-minutes: 15 # 秒杀单超时关单
   ai:
